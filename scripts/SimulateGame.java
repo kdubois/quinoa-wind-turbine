@@ -23,13 +23,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SimulateGame {
-    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     public static final int USERS = 50;
     public static final int CLICKS = 500;
     public static final Random R = new Random();
 
     public static void main(String... args) throws InterruptedException {
-        load(args[0], Integer.parseInt(args[1]));
+        String host = "localhost";
+        int port = 8080;
+        if(args.length == 1) {
+            String url = args[0];
+            port = url.contains("https://") ? 443 : 80;
+            host = url.replaceAll("https?://", "").replaceAll("/$", "");
+        } else if (args.length > 1) {
+            host = args[0];
+            port = Integer.parseInt(args[1]);
+        }
+        load(host, port);
     }
 
     static void load(String host, int port) throws InterruptedException {
